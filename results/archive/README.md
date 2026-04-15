@@ -60,12 +60,6 @@ source myenv/bin/activate
 pip install -r requirements.txt
 ```
 
-Optional (fully pinned reproducibility lock):
-
-```bash
-pip install -r requirements-lock.txt
-```
-
 3) Download DeepMIMO O1_60 scenario:
 
 ```python
@@ -143,23 +137,11 @@ python run_experiments.py --phase 3
 python run_experiments.py --phase 4
 ```
 
-### Reproducibility outputs and checks
-
-```bash
-python validate_smoke.py --project_root .
-python aggregate_results.py --raw_dir results/raw --out results/summary/aggregated_metrics.csv --paper_table results/summary/final_comparison_table.csv --coverage_out results/summary/coverage_report.csv
-python generate_paper_plots.py --raw_dir results/raw --summary_csv results/summary/aggregated_metrics.csv --out_dir results/figures --manifest_path results/figures/figure_manifest.csv
-python generate_paper_plots.py --raw_dir results/raw --summary_csv results/summary/aggregated_metrics.csv --out_dir results/figures_clean --manifest_path results/figures_clean/figure_manifest.csv
-```
-
 ## Outputs for Paper
 
 - Raw run logs: `results/raw/*.json`, `results/raw/*_history.csv`
 - Aggregated metrics: `results/summary/aggregated_metrics.csv`
 - Final comparison table: `results/summary/final_comparison_table.csv`
-- Coverage report: `results/summary/coverage_report.csv`
-- Figure manifest: `results/figures/figure_manifest.csv`
-- Archive bundle (configs + summaries + appendix): `results/archive/`
 - Figures (mandatory plots):
 
 ```bash

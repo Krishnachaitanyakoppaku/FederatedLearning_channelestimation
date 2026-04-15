@@ -40,3 +40,7 @@ Thumbs.db
 # ========== Misc ==========
 *.log
 *.tmp
+
+# ========== Checkpoints ==========
+checkpoints/
+results/checkpoints/

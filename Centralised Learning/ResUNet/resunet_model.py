@@ -5,6 +5,22 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, Dataset
 import matplotlib.pyplot as plt
+import sys
+from pathlib import Path
+
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.append(str(PROJECT_ROOT))
+
+from research_core.logging_utils import ExperimentLogger, RunMetadata
+from research_core.logging_utils import (
+    detect_torch_version,
+    file_sha256,
+    get_git_commit,
+    runtime_platform,
+    runtime_python_version,
+)
+from research_core.metrics import nmse
 
 # -------------------------------------------------------------
 # DIRECTORIES & CONSTANTS
@@ -161,18 +177,13 @@ def evaluate(model, test_loader, device, norm_stats):
     H_pred = Y_pred[:, 0, :, :] + 1j * Y_pred[:, 1, :, :]
     H_true = Y_true[:, 0, :, :] + 1j * Y_true[:, 1, :, :]
     
-    # NMSE
-    nmse_num = np.linalg.norm(H_true - H_pred) ** 2
-    nmse_den = np.linalg.norm(H_true) ** 2
-    nmse = nmse_num / nmse_den
-    nmse_db = 10 * np.log10(nmse)
-    
-    return nmse, nmse_db
+    nmse_metrics = nmse(H_true, H_pred)
+    return nmse_metrics["nmse_linear"], nmse_metrics["nmse_db"]
 
 # -------------------------------------------------------------
 # TRAINING LOOP
 # -------------------------------------------------------------
-def train_model(snr_db, epochs, lr, batch_size, device):
+def train_model(snr_db, epochs, lr, batch_size, device, logger=None, run_id=None):
     print(f"\n=========================================")
     print(f" TRAINING ResUNet FOR SNR = {snr_db} dB")
     print(f"=========================================")
@@ -206,6 +217,13 @@ def train_model(snr_db, epochs, lr, batch_size, device):
         val_nmse, val_nmse_db = evaluate(model, test_loader, device, norm_stats)
         
         print(f"Epoch [{epoch}/{epochs}] - Loss: {epoch_loss:.6f} - Validation NMSE: {val_nmse_db:.2f} dB")
+        if logger is not None and run_id is not None:
+            logger.log_step(
+                run_id,
+                "epoch",
+                epoch,
+                {"train_mse_loss": float(epoch_loss), "val_nmse_db": float(val_nmse_db)},
+            )
         
     print("\n-----------------------------------------")
     print("TEST SET RESULTS:")
@@ -226,7 +244,14 @@ def main():
     parser.add_argument("--lr", type=float, default=5e-4, help="Learning rate")
     parser.add_argument("--snr", type=int, default=10, help="SNR to train on (default 10 dB)")
     parser.add_argument("--all", action="store_true", help="Train and plot across all SNRs")
+    parser.add_argument("--seed", type=int, default=42, help="Random seed")
+    parser.add_argument("--run_id", type=str, default="", help="Run identifier for structured logs")
+    parser.add_argument("--log_dir", type=str, default=str(PROJECT_ROOT / "results" / "raw"), help="Directory for structured logs")
+    parser.add_argument("--config_path", type=str, default="", help="Optional config path for reproducibility logging")
     args = parser.parse_args()
+
+    torch.manual_seed(args.seed)
+    np.random.seed(args.seed)
 
     # Device Setup
     if torch.backends.mps.is_available():
@@ -239,9 +264,34 @@ def main():
 
     if args.all:
         nmses_db = []
+        logger = ExperimentLogger(args.log_dir)
         for snr in SNR_LEVELS:
-            model, _, val_nmse_db = train_model(snr, args.epochs, args.lr, args.batch, device)
+            run_id = args.run_id or f"resunet_centralized_snr{snr}_seed{args.seed}"
+            logger.start_run(
+                RunMetadata(
+                    run_id=run_id,
+                    model="ResUNet",
+                    setting="Centralized",
+                    data_mode="N/A",
+                    snr_db=snr,
+                    seed=args.seed,
+                    local_epochs=None,
+                    global_rounds=None,
+                    mu=None,
+                    lr=args.lr,
+                    batch_size=args.batch,
+                    config_path=args.config_path or None,
+                    config_sha256=file_sha256(args.config_path) if args.config_path else None,
+                    git_commit=get_git_commit(str(PROJECT_ROOT)),
+                    python_version=runtime_python_version(),
+                    torch_version=detect_torch_version(),
+                    device=str(device),
+                    platform=runtime_platform(),
+                )
+            )
+            model, _, val_nmse_db = train_model(snr, args.epochs, args.lr, args.batch, device, logger=logger, run_id=run_id)
             nmses_db.append(val_nmse_db)
+            logger.end_run(run_id, {"final_nmse_db": float(val_nmse_db)})
             
             # Save for each SNR
             torch.save(model.state_dict(), f"resunet_model_{snr}dB.pth")
@@ -257,7 +307,32 @@ def main():
         plt.savefig("nmse_vs_snr_resunet.png")
         print("\n[✓] Plot saved as nmse_vs_snr_resunet.png")
     else:
-        model, _, _ = train_model(args.snr, args.epochs, args.lr, args.batch, device)
+        run_id = args.run_id or f"resunet_centralized_snr{args.snr}_seed{args.seed}"
+        logger = ExperimentLogger(args.log_dir)
+        logger.start_run(
+            RunMetadata(
+                run_id=run_id,
+                model="ResUNet",
+                setting="Centralized",
+                data_mode="N/A",
+                snr_db=args.snr,
+                seed=args.seed,
+                local_epochs=None,
+                global_rounds=None,
+                mu=None,
+                lr=args.lr,
+                batch_size=args.batch,
+                config_path=args.config_path or None,
+                config_sha256=file_sha256(args.config_path) if args.config_path else None,
+                git_commit=get_git_commit(str(PROJECT_ROOT)),
+                python_version=runtime_python_version(),
+                torch_version=detect_torch_version(),
+                device=str(device),
+                platform=runtime_platform(),
+            )
+        )
+        model, _, val_nmse_db = train_model(args.snr, args.epochs, args.lr, args.batch, device, logger=logger, run_id=run_id)
+        logger.end_run(run_id, {"final_nmse_db": float(val_nmse_db)})
         save_path = "resunet_model.pth"
         torch.save(model.state_dict(), save_path)
         print(f"\n[✓] Trained model saved as: {save_path}")

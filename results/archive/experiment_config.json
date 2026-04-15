@@ -1,0 +1,17 @@
+{
+  "seeds": [42, 123, 777],
+  "snr_db": 10,
+  "centralized_epochs": {
+    "cnn": 20,
+    "resunet": 40
+  },
+  "batch_size": 32,
+  "lr": {
+    "cnn": 0.001,
+    "resunet": 0.0005,
+    "federated": 0.001
+  },
+  "fl_rounds": [10, 20, 30, 50],
+  "local_epochs": [1, 2, 3, 5],
+  "fedprox_mu": [0.001, 0.005, 0.01]
+}

@@ -1,0 +1,8 @@
+DeepMIMO==4.0.0b11
+pandas==3.0.1
+numpy==2.2.6
+scipy==1.17.1
+matplotlib==3.10.8
+tqdm==4.67.3
+requests==2.32.5
+torch>=2.5.0

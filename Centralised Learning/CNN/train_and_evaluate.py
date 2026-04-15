@@ -33,9 +33,25 @@ import numpy as np
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
+import sys
+from pathlib import Path
 
 # Local imports — model & dataset defined in cnn_model.py
 from cnn_model import ChannelEstimatorCNN, ChannelDataset, count_parameters
+
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.append(str(PROJECT_ROOT))
+
+from research_core.logging_utils import ExperimentLogger, RunMetadata
+from research_core.logging_utils import (
+    detect_torch_version,
+    file_sha256,
+    get_git_commit,
+    runtime_platform,
+    runtime_python_version,
+)
+from research_core.metrics import nmse
 
 
 # ══════════════════════════════════════════════════════════════
@@ -59,6 +75,10 @@ def parse_args():
     parser.add_argument("--batch",  type=int,   default=32,    help="Batch size")
     parser.add_argument("--all",    action="store_true",
                         help="Train & evaluate on ALL SNR levels, then print summary")
+    parser.add_argument("--seed", type=int, default=42, help="Random seed")
+    parser.add_argument("--run_id", type=str, default="", help="Run identifier for structured logs")
+    parser.add_argument("--log_dir", type=str, default=str(PROJECT_ROOT / "results" / "raw"), help="Directory for structured logs")
+    parser.add_argument("--config_path", type=str, default="", help="Optional config path for reproducibility logging")
     return parser.parse_args()
 
 
@@ -201,11 +221,8 @@ def evaluate(model, loader, device, norm_stats):
 
     N = H_true.shape[0]
 
-    # ── 1. NMSE (dB) ─────────────────────────────────────────
-    nmse_num  = np.linalg.norm(H_true - H_pred) ** 2
-    nmse_den  = np.linalg.norm(H_true) ** 2
-    nmse      = nmse_num / nmse_den
-    nmse_db   = 10 * np.log10(nmse)
+    nmse_metrics = nmse(H_true, H_pred)
+    nmse_db = nmse_metrics["nmse_db"]
 
     # ── 2. MSE ───────────────────────────────────────────────
     mse = np.mean(np.abs(H_true - H_pred) ** 2)
@@ -246,7 +263,7 @@ def evaluate(model, loader, device, norm_stats):
 
     metrics = {
         "nmse_db":  nmse_db,
-        "nmse":     nmse,
+        "nmse":     nmse_metrics["nmse_linear"],
         "mse":      mse,
         "rmse":     rmse,
         "mae":      mae,
@@ -278,7 +295,7 @@ def print_metrics(metrics, snr_db, n_samples=None):
 #  5.  TRAIN & EVALUATE FOR A SINGLE SNR
 # ══════════════════════════════════════════════════════════════
 
-def train_and_evaluate_single(snr_db, epochs, lr, batch_size, device):
+def train_and_evaluate_single(snr_db, epochs, lr, batch_size, device, logger=None, run_id=None):
     """
     Full pipeline for one SNR level: build data → train → evaluate.
 
@@ -307,7 +324,9 @@ def train_and_evaluate_single(snr_db, epochs, lr, batch_size, device):
           f"lr={lr}, SNR={snr_db} dB\n")
 
     for epoch in range(1, epochs + 1):
-        train(model, train_loader, criterion, optimizer, device, epoch, epochs)
+        epoch_loss = train(model, train_loader, criterion, optimizer, device, epoch, epochs)
+        if logger is not None and run_id is not None:
+            logger.log_step(run_id, "epoch", epoch, {"train_mse_loss": float(epoch_loss)})
 
     # ── Save trained model weights ────────────────────────────
     weights_dir = "weights"
@@ -485,6 +504,8 @@ def print_summary_table(all_cnn_metrics, all_ls_metrics, snr_levels):
 
 def main():
     args = parse_args()
+    torch.manual_seed(args.seed)
+    np.random.seed(args.seed)
 
     # ── Device selection (MPS for Apple Silicon, CUDA, or CPU) ─
     if torch.backends.mps.is_available():
@@ -501,10 +522,35 @@ def main():
         all_ls_metrics  = {}
 
         for snr in SNR_LEVELS:
+            run_id = args.run_id or f"cnn_centralized_snr{snr}_seed{args.seed}"
+            logger = ExperimentLogger(args.log_dir)
+            logger.start_run(
+                RunMetadata(
+                    run_id=run_id,
+                    model="CNN",
+                    setting="Centralized",
+                    data_mode="N/A",
+                    snr_db=snr,
+                    seed=args.seed,
+                    local_epochs=None,
+                    global_rounds=None,
+                    mu=None,
+                    lr=args.lr,
+                    batch_size=args.batch,
+                    config_path=args.config_path or None,
+                    config_sha256=file_sha256(args.config_path) if args.config_path else None,
+                    git_commit=get_git_commit(str(PROJECT_ROOT)),
+                    python_version=runtime_python_version(),
+                    torch_version=detect_torch_version(),
+                    device=str(device),
+                    platform=runtime_platform(),
+                )
+            )
             cnn_metrics = train_and_evaluate_single(
-                snr, args.epochs, args.lr, args.batch, device
+                snr, args.epochs, args.lr, args.batch, device, logger=logger, run_id=run_id
             )
             all_cnn_metrics[snr] = cnn_metrics
+            logger.end_run(run_id, {"final_nmse_db": cnn_metrics["nmse_db"], "final_nmse_linear": cnn_metrics["nmse"]})
 
             ls_metrics = compute_ls_metrics(snr)
             all_ls_metrics[snr] = ls_metrics
@@ -513,10 +559,35 @@ def main():
         print_summary_table(all_cnn_metrics, all_ls_metrics, SNR_LEVELS)
 
     else:
+        run_id = args.run_id or f"cnn_centralized_snr{args.snr}_seed{args.seed}"
+        logger = ExperimentLogger(args.log_dir)
+        logger.start_run(
+            RunMetadata(
+                run_id=run_id,
+                model="CNN",
+                setting="Centralized",
+                data_mode="N/A",
+                snr_db=args.snr,
+                seed=args.seed,
+                local_epochs=None,
+                global_rounds=None,
+                mu=None,
+                lr=args.lr,
+                batch_size=args.batch,
+                config_path=args.config_path or None,
+                config_sha256=file_sha256(args.config_path) if args.config_path else None,
+                git_commit=get_git_commit(str(PROJECT_ROOT)),
+                python_version=runtime_python_version(),
+                torch_version=detect_torch_version(),
+                device=str(device),
+                platform=runtime_platform(),
+            )
+        )
         # ── Single SNR mode ──────────────────────────────────
         metrics = train_and_evaluate_single(
-            args.snr, args.epochs, args.lr, args.batch, device
+            args.snr, args.epochs, args.lr, args.batch, device, logger=logger, run_id=run_id
         )
+        logger.end_run(run_id, {"final_nmse_db": metrics["nmse_db"], "final_nmse_linear": metrics["nmse"]})
 
         # Also show LS comparison for context
         ls_metrics = compute_ls_metrics(args.snr)

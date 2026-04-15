@@ -1,0 +1,56 @@
+{
+  "timestamp": "2026-04-15T00:46:41.668842",
+  "config": {
+    "centralized_epochs": 30,
+    "snr": 10,
+    "fed_rounds": 15,
+    "num_clients": 5,
+    "local_epochs": 2,
+    "mu": 0.01,
+    "run_mode": "train"
+  },
+  "results": {
+    "cnn_centralized": {
+      "display_name": "CNN (Centralized)",
+      "type": "centralized",
+      "nmse_db": null,
+      "nmse_linear": null
+    },
+    "resunet_centralized": {
+      "display_name": "ResUNet (Centralized)",
+      "type": "centralized",
+      "nmse_db": null,
+      "nmse_linear": null
+    },
+    "cnn_fedavg": {
+      "display_name": "CNN FedAvg (IID)",
+      "type": "federated",
+      "nmse_db": null,
+      "nmse_linear": null
+    },
+    "cnn_fedprox": {
+      "display_name": "CNN FedProx (Non-IID)",
+      "type": "federated",
+      "nmse_db": null,
+      "nmse_linear": null
+    },
+    "resunet_fedavg": {
+      "display_name": "ResUNet FedAvg (IID)",
+      "type": "federated",
+      "nmse_db": null,
+      "nmse_linear": null
+    },
+    "resunet_fedprox_iid": {
+      "display_name": "ResUNet FedProx (IID)",
+      "type": "federated",
+      "nmse_db": null,
+      "nmse_linear": null
+    },
+    "resunet_fedprox_noniid": {
+      "display_name": "ResUNet FedProx (Non-IID)",
+      "type": "federated",
+      "nmse_db": null,
+      "nmse_linear": null
+    }
+  }
+}
