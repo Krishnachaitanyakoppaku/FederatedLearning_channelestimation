@@ -4,7 +4,8 @@ import os
 import numpy as np
 
 def create_non_iid_data(snr: int, num_clients: int, samples_per_client: int, output_dir: str):
-    base_dir = "../../dataset/cnn"
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    base_dir = os.path.normpath(os.path.join(script_dir, "..", "..", "dataset", "cnn"))
     os.makedirs(output_dir, exist_ok=True)
     
     np.random.seed(42)  # For reproducibility

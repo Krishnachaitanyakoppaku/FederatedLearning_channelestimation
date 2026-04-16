@@ -1,0 +1,333 @@
+{
+  "metadata": {
+    "run_id": "cnn_fedavg_iid_r50_e3_seed123",
+    "model": "CNN",
+    "setting": "FedAvg",
+    "data_mode": "IID",
+    "snr_db": 10,
+    "seed": 123,
+    "local_epochs": 3,
+    "global_rounds": 50,
+    "mu": null,
+    "lr": 0.001,
+    "batch_size": 32,
+    "config_path": "/Users/chaitu/Desktop/Wireless paper/Project/experiment_config.json",
+    "config_sha256": "8562342df0c8bfb2fed2f8198a96851a9b01057c32fc3f455e88d67104a99cb7",
+    "git_commit": "27e59aad6cb238a367ea43446014fd8cf2cd07b3",
+    "python_version": "3.12.4",
+    "torch_version": "2.11.0",
+    "device": "mps",
+    "platform": "macOS-26.3.1-arm64-arm-64bit",
+    "extra": {
+      "num_clients": 5
+    }
+  },
+  "started_at": 1776315499.265353,
+  "history": [
+    {
+      "step_kind": "round",
+      "step_index": 1,
+      "nmse_db": -15.53815271200951,
+      "nmse_linear": 0.02793731912970543
+    },
+    {
+      "step_kind": "round",
+      "step_index": 2,
+      "nmse_db": -16.995969877350984,
+      "nmse_linear": 0.019971147179603577
+    },
+    {
+      "step_kind": "round",
+      "step_index": 3,
+      "nmse_db": -17.61861546603219,
+      "nmse_linear": 0.017303679138422012
+    },
+    {
+      "step_kind": "round",
+      "step_index": 4,
+      "nmse_db": -17.902104220621283,
+      "nmse_linear": 0.016210244968533516
+    },
+    {
+      "step_kind": "round",
+      "step_index": 5,
+      "nmse_db": -18.199314384929934,
+      "nmse_linear": 0.01513800211250782
+    },
+    {
+      "step_kind": "round",
+      "step_index": 6,
+      "nmse_db": -18.328220451660137,
+      "nmse_linear": 0.014695283025503159
+    },
+    {
+      "step_kind": "round",
+      "step_index": 7,
+      "nmse_db": -18.518499615301057,
+      "nmse_linear": 0.014065333642065525
+    },
+    {
+      "step_kind": "round",
+      "step_index": 8,
+      "nmse_db": -18.66272900211984,
+      "nmse_linear": 0.013605894520878792
+    },
+    {
+      "step_kind": "round",
+      "step_index": 9,
+      "nmse_db": -18.736412239376147,
+      "nmse_linear": 0.013377001509070396
+    },
+    {
+      "step_kind": "round",
+      "step_index": 10,
+      "nmse_db": -18.77425595488658,
+      "nmse_linear": 0.01326094288378954
+    },
+    {
+      "step_kind": "round",
+      "step_index": 11,
+      "nmse_db": -18.92961595025917,
+      "nmse_linear": 0.01279494445770979
+    },
+    {
+      "step_kind": "round",
+      "step_index": 12,
+      "nmse_db": -18.973058798966917,
+      "nmse_linear": 0.01266759354621172
+    },
+    {
+      "step_kind": "round",
+      "step_index": 13,
+      "nmse_db": -19.066915356145586,
+      "nmse_linear": 0.012396767735481262
+    },
+    {
+      "step_kind": "round",
+      "step_index": 14,
+      "nmse_db": -19.085711552947732,
+      "nmse_linear": 0.012343230657279491
+    },
+    {
+      "step_kind": "round",
+      "step_index": 15,
+      "nmse_db": -19.18576580939649,
+      "nmse_linear": 0.012062113732099533
+    },
+    {
+      "step_kind": "round",
+      "step_index": 16,
+      "nmse_db": -19.169564842053326,
+      "nmse_linear": 0.012107194401323795
+    },
+    {
+      "step_kind": "round",
+      "step_index": 17,
+      "nmse_db": -19.246571460859844,
+      "nmse_linear": 0.011894408613443375
+    },
+    {
+      "step_kind": "round",
+      "step_index": 18,
+      "nmse_db": -19.27977429243296,
+      "nmse_linear": 0.011803819797933102
+    },
+    {
+      "step_kind": "round",
+      "step_index": 19,
+      "nmse_db": -19.253366193090418,
+      "nmse_linear": 0.011875813826918602
+    },
+    {
+      "step_kind": "round",
+      "step_index": 20,
+      "nmse_db": -19.34268659209739,
+      "nmse_linear": 0.011634061112999916
+    },
+    {
+      "step_kind": "round",
+      "step_index": 21,
+      "nmse_db": -19.38228375558406,
+      "nmse_linear": 0.011528468690812588
+    },
+    {
+      "step_kind": "round",
+      "step_index": 22,
+      "nmse_db": -19.37628077241191,
+      "nmse_linear": 0.011544414795935154
+    },
+    {
+      "step_kind": "round",
+      "step_index": 23,
+      "nmse_db": -19.442778686020826,
+      "nmse_linear": 0.01136899646371603
+    },
+    {
+      "step_kind": "round",
+      "step_index": 24,
+      "nmse_db": -19.400224278717758,
+      "nmse_linear": 0.01148094329982996
+    },
+    {
+      "step_kind": "round",
+      "step_index": 25,
+      "nmse_db": -19.447974884147584,
+      "nmse_linear": 0.011355401948094368
+    },
+    {
+      "step_kind": "round",
+      "step_index": 26,
+      "nmse_db": -19.48266313850415,
+      "nmse_linear": 0.011265064589679241
+    },
+    {
+      "step_kind": "round",
+      "step_index": 27,
+      "nmse_db": -19.481933976180905,
+      "nmse_linear": 0.011266956105828285
+    },
+    {
+      "step_kind": "round",
+      "step_index": 28,
+      "nmse_db": -19.476651834848994,
+      "nmse_linear": 0.011280667968094349
+    },
+    {
+      "step_kind": "round",
+      "step_index": 29,
+      "nmse_db": -19.504172578561136,
+      "nmse_linear": 0.011209409683942795
+    },
+    {
+      "step_kind": "round",
+      "step_index": 30,
+      "nmse_db": -19.558911831964053,
+      "nmse_linear": 0.011069010943174362
+    },
+    {
+      "step_kind": "round",
+      "step_index": 31,
+      "nmse_db": -19.565257720996208,
+      "nmse_linear": 0.011052848771214485
+    },
+    {
+      "step_kind": "round",
+      "step_index": 32,
+      "nmse_db": -19.558529634149767,
+      "nmse_linear": 0.01106998510658741
+    },
+    {
+      "step_kind": "round",
+      "step_index": 33,
+      "nmse_db": -19.61339990182777,
+      "nmse_linear": 0.010931002907454967
+    },
+    {
+      "step_kind": "round",
+      "step_index": 34,
+      "nmse_db": -19.60382289785256,
+      "nmse_linear": 0.01095513440668583
+    },
+    {
+      "step_kind": "round",
+      "step_index": 35,
+      "nmse_db": -19.560945061182146,
+      "nmse_linear": 0.011063829995691776
+    },
+    {
+      "step_kind": "round",
+      "step_index": 36,
+      "nmse_db": -19.630631430640335,
+      "nmse_linear": 0.010887717828154564
+    },
+    {
+      "step_kind": "round",
+      "step_index": 37,
+      "nmse_db": -19.651243747124617,
+      "nmse_linear": 0.010836165398359299
+    },
+    {
+      "step_kind": "round",
+      "step_index": 38,
+      "nmse_db": -19.630863989851456,
+      "nmse_linear": 0.010887134820222855
+    },
+    {
+      "step_kind": "round",
+      "step_index": 39,
+      "nmse_db": -19.65856763700488,
+      "nmse_linear": 0.010817906819283962
+    },
+    {
+      "step_kind": "round",
+      "step_index": 40,
+      "nmse_db": -19.644329428977557,
+      "nmse_linear": 0.010853431187570095
+    },
+    {
+      "step_kind": "round",
+      "step_index": 41,
+      "nmse_db": -19.69203319579108,
+      "nmse_linear": 0.010734867304563522
+    },
+    {
+      "step_kind": "round",
+      "step_index": 42,
+      "nmse_db": -19.69780515362731,
+      "nmse_linear": 0.010720609687268734
+    },
+    {
+      "step_kind": "round",
+      "step_index": 43,
+      "nmse_db": -19.66716733785836,
+      "nmse_linear": 0.010796506889164448
+    },
+    {
+      "step_kind": "round",
+      "step_index": 44,
+      "nmse_db": -19.699758399354888,
+      "nmse_linear": 0.010715789161622524
+    },
+    {
+      "step_kind": "round",
+      "step_index": 45,
+      "nmse_db": -19.697524842876348,
+      "nmse_linear": 0.010721301659941673
+    },
+    {
+      "step_kind": "round",
+      "step_index": 46,
+      "nmse_db": -19.708291880029357,
+      "nmse_linear": 0.010694754309952259
+    },
+    {
+      "step_kind": "round",
+      "step_index": 47,
+      "nmse_db": -19.725655353132336,
+      "nmse_linear": 0.010652081109583378
+    },
+    {
+      "step_kind": "round",
+      "step_index": 48,
+      "nmse_db": -19.748197034349012,
+      "nmse_linear": 0.010596935637295246
+    },
+    {
+      "step_kind": "round",
+      "step_index": 49,
+      "nmse_db": -19.758329965258717,
+      "nmse_linear": 0.010572239756584167
+    },
+    {
+      "step_kind": "round",
+      "step_index": 50,
+      "nmse_db": -19.765742571574833,
+      "nmse_linear": 0.010554210282862186
+    }
+  ],
+  "summary": {
+    "final_nmse_db": -19.765742571574833
+  },
+  "ended_at": 1776316205.1384242,
+  "duration_sec": 705.8730711936951
+}

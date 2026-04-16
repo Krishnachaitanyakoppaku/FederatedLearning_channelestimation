@@ -11,10 +11,10 @@
     "mu": null,
     "lr": 0.001,
     "batch_size": 32,
-    "config_path": null,
-    "config_sha256": null,
-    "git_commit": "1a299c4e43b398647a4ae6c4d5380ec07261c1e5",
-    "python_version": "3.12.5",
+    "config_path": "/Users/chaitu/Desktop/Wireless paper/Project/experiment_config.json",
+    "config_sha256": "8562342df0c8bfb2fed2f8198a96851a9b01057c32fc3f455e88d67104a99cb7",
+    "git_commit": "27e59aad6cb238a367ea43446014fd8cf2cd07b3",
+    "python_version": "3.12.4",
     "torch_version": "2.11.0",
     "device": "mps",
     "platform": "macOS-26.3.1-arm64-arm-64bit",
@@ -22,7 +22,7 @@
       "num_clients": 5
     }
   },
-  "started_at": 1776199879.805584,
+  "started_at": 1776267708.92911,
   "history": [
     {
       "step_kind": "round",
@@ -148,6 +148,6 @@
   "summary": {
     "final_nmse_db": -19.04807443717083
   },
-  "ended_at": 1776200321.3517902,
-  "duration_sec": 441.5462062358856
+  "ended_at": 1776271387.292154,
+  "duration_sec": 3678.363044023514
 }

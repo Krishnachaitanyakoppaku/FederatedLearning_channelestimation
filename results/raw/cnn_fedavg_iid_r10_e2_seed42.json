@@ -1,0 +1,93 @@
+{
+  "metadata": {
+    "run_id": "cnn_fedavg_iid_r10_e2_seed42",
+    "model": "CNN",
+    "setting": "FedAvg",
+    "data_mode": "IID",
+    "snr_db": 10,
+    "seed": 42,
+    "local_epochs": 2,
+    "global_rounds": 10,
+    "mu": null,
+    "lr": 0.001,
+    "batch_size": 32,
+    "config_path": "/Users/chaitu/Desktop/Wireless paper/Project/experiment_config.json",
+    "config_sha256": "8562342df0c8bfb2fed2f8198a96851a9b01057c32fc3f455e88d67104a99cb7",
+    "git_commit": "27e59aad6cb238a367ea43446014fd8cf2cd07b3",
+    "python_version": "3.12.4",
+    "torch_version": "2.11.0",
+    "device": "mps",
+    "platform": "macOS-26.3.1-arm64-arm-64bit",
+    "extra": {
+      "num_clients": 5
+    }
+  },
+  "started_at": 1776252066.423111,
+  "history": [
+    {
+      "step_kind": "round",
+      "step_index": 1,
+      "nmse_db": -15.087465415789193,
+      "nmse_linear": 0.03099227510392666
+    },
+    {
+      "step_kind": "round",
+      "step_index": 2,
+      "nmse_db": -16.555350070052533,
+      "nmse_linear": 0.022103700786828995
+    },
+    {
+      "step_kind": "round",
+      "step_index": 3,
+      "nmse_db": -17.184634109504977,
+      "nmse_linear": 0.01912214420735836
+    },
+    {
+      "step_kind": "round",
+      "step_index": 4,
+      "nmse_db": -17.60534211278585,
+      "nmse_linear": 0.017356645315885544
+    },
+    {
+      "step_kind": "round",
+      "step_index": 5,
+      "nmse_db": -17.844761399740626,
+      "nmse_linear": 0.01642569899559021
+    },
+    {
+      "step_kind": "round",
+      "step_index": 6,
+      "nmse_db": -17.964059721238574,
+      "nmse_linear": 0.015980634838342667
+    },
+    {
+      "step_kind": "round",
+      "step_index": 7,
+      "nmse_db": -18.13602501837233,
+      "nmse_linear": 0.015360222198069096
+    },
+    {
+      "step_kind": "round",
+      "step_index": 8,
+      "nmse_db": -18.320317616247785,
+      "nmse_linear": 0.014722048304975033
+    },
+    {
+      "step_kind": "round",
+      "step_index": 9,
+      "nmse_db": -18.42767647587241,
+      "nmse_linear": 0.01436257641762495
+    },
+    {
+      "step_kind": "round",
+      "step_index": 10,
+      "nmse_db": -18.45486861091603,
+      "nmse_linear": 0.014272930100560188
+    }
+  ],
+  "summary": {
+    "final_nmse_db": -18.45486861091603
+  },
+  "ended_at": 1776271371.202892,
+  "duration_sec": 19304.779781103134
+}

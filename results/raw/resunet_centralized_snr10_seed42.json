@@ -11,16 +11,16 @@
     "mu": null,
     "lr": 0.0005,
     "batch_size": 32,
-    "config_path": null,
-    "config_sha256": null,
-    "git_commit": "1a299c4e43b398647a4ae6c4d5380ec07261c1e5",
-    "python_version": "3.12.5",
+    "config_path": "/Users/chaitu/Desktop/Wireless paper/Project/experiment_config.json",
+    "config_sha256": "8562342df0c8bfb2fed2f8198a96851a9b01057c32fc3f455e88d67104a99cb7",
+    "git_commit": "27e59aad6cb238a367ea43446014fd8cf2cd07b3",
+    "python_version": "3.12.4",
     "torch_version": "2.11.0",
     "device": "mps",
     "platform": "macOS-26.3.1-arm64-arm-64bit",
     "extra": null
   },
-  "started_at": 1776198619.872479,
+  "started_at": 1776248231.992349,
   "history": [
     {
       "step_kind": "epoch",
@@ -201,11 +201,71 @@
       "step_index": 30,
       "train_mse_loss": 0.007226174037593107,
       "val_nmse_db": -21.816628735389976
+    },
+    {
+      "step_kind": "epoch",
+      "step_index": 31,
+      "train_mse_loss": 0.007626488742729028,
+      "val_nmse_db": -21.06577208277249
+    },
+    {
+      "step_kind": "epoch",
+      "step_index": 32,
+      "train_mse_loss": 0.0076842819325005016,
+      "val_nmse_db": -22.02583872276151
+    },
+    {
+      "step_kind": "epoch",
+      "step_index": 33,
+      "train_mse_loss": 0.007684373611894746,
+      "val_nmse_db": -21.99068665771726
+    },
+    {
+      "step_kind": "epoch",
+      "step_index": 34,
+      "train_mse_loss": 0.007100528031587601,
+      "val_nmse_db": -22.062783963086478
+    },
+    {
+      "step_kind": "epoch",
+      "step_index": 35,
+      "train_mse_loss": 0.007017668484089275,
+      "val_nmse_db": -21.849680408908775
+    },
+    {
+      "step_kind": "epoch",
+      "step_index": 36,
+      "train_mse_loss": 0.006488524498417973,
+      "val_nmse_db": -22.009516642288965
+    },
+    {
+      "step_kind": "epoch",
+      "step_index": 37,
+      "train_mse_loss": 0.007357898925741514,
+      "val_nmse_db": -21.47013227742018
+    },
+    {
+      "step_kind": "epoch",
+      "step_index": 38,
+      "train_mse_loss": 0.00708854772305737,
+      "val_nmse_db": -21.539084962996426
+    },
+    {
+      "step_kind": "epoch",
+      "step_index": 39,
+      "train_mse_loss": 0.007281733790102105,
+      "val_nmse_db": -21.246639566349884
+    },
+    {
+      "step_kind": "epoch",
+      "step_index": 40,
+      "train_mse_loss": 0.006690531236430009,
+      "val_nmse_db": -22.403019083283354
     }
   ],
   "summary": {
-    "final_nmse_db": -21.816628735389976
+    "final_nmse_db": -22.403019083283354
   },
-  "ended_at": 1776199876.868104,
-  "duration_sec": 1256.9956250190735
+  "ended_at": 1776248980.246817,
+  "duration_sec": 748.2544682025909
 }
