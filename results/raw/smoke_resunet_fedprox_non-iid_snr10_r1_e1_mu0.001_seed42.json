@@ -1,0 +1,46 @@
+{
+  "metadata": {
+    "run_id": "smoke_resunet_fedprox_non-iid_snr10_r1_e1_mu0.001_seed42",
+    "model": "ResUNet",
+    "setting": "FedProx",
+    "data_mode": "Non-IID",
+    "snr_db": 10,
+    "seed": 42,
+    "local_epochs": 1,
+    "global_rounds": 1,
+    "mu": 0.001,
+    "lr": 0.0005,
+    "batch_size": 16,
+    "config_path": null,
+    "config_sha256": null,
+    "git_commit": "47c4a55e61305b654bda99925e1e1e330f104b9a",
+    "python_version": "3.12.4",
+    "torch_version": "2.11.0",
+    "device": "mps",
+    "platform": "macOS-26.3.1-arm64-arm-64bit",
+    "extra": {
+      "num_clients": 2
+    }
+  },
+  "started_at": 1776376909.3747258,
+  "history": [
+    {
+      "step_kind": "round",
+      "step_index": 0,
+      "nmse_db": -9.375504797911681,
+      "nmse_linear": 0.11546477675437927
+    },
+    {
+      "step_kind": "round",
+      "step_index": 1,
+      "nmse_db": -14.267066170299504,
+      "nmse_linear": 0.037436340004205704
+    }
+  ],
+  "summary": {
+    "final_nmse_db": -14.267066170299504,
+    "final_nmse_linear": 0.0374363400042057
+  },
+  "ended_at": 1776376935.024775,
+  "duration_sec": 25.650049209594727
+}

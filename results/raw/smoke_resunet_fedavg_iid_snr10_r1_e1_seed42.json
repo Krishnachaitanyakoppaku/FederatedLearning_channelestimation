@@ -1,0 +1,46 @@
+{
+  "metadata": {
+    "run_id": "smoke_resunet_fedavg_iid_snr10_r1_e1_seed42",
+    "model": "ResUNet",
+    "setting": "FedAvg",
+    "data_mode": "IID",
+    "snr_db": 10,
+    "seed": 42,
+    "local_epochs": 1,
+    "global_rounds": 1,
+    "mu": null,
+    "lr": 0.0005,
+    "batch_size": 16,
+    "config_path": null,
+    "config_sha256": null,
+    "git_commit": "47c4a55e61305b654bda99925e1e1e330f104b9a",
+    "python_version": "3.12.4",
+    "torch_version": "2.11.0",
+    "device": "mps",
+    "platform": "macOS-26.3.1-arm64-arm-64bit",
+    "extra": {
+      "num_clients": 2
+    }
+  },
+  "started_at": 1776376879.044926,
+  "history": [
+    {
+      "step_kind": "round",
+      "step_index": 0,
+      "nmse_db": -9.375504797911681,
+      "nmse_linear": 0.11546477675437927
+    },
+    {
+      "step_kind": "round",
+      "step_index": 1,
+      "nmse_db": -15.734122251446488,
+      "nmse_linear": 0.026704704388976097
+    }
+  ],
+  "summary": {
+    "final_nmse_db": -15.734122251446488,
+    "final_nmse_linear": 0.0267047043889761
+  },
+  "ended_at": 1776376902.6201978,
+  "duration_sec": 23.57527184486389
+}

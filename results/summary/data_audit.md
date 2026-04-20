@@ -1,0 +1,1 @@
+# Data Audit- Total runs: 266- Missing final NMSE: 0| Model | Setting | Mode | Expected | Observed | Status ||---|---|---|---:|---:|---|| CNN | Centralized | N/A | 3 | 3 | ok || CNN | FedAvg | IID | 48 | 48 | ok || CNN | FedAvg | Non-IID | 48 | 48 | ok || CNN | FedProx | Non-IID | 144 | 144 | ok || ResUNet | Centralized | N/A | 3 | 6 | mismatch |

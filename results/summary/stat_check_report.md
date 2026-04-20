@@ -1,0 +1,1 @@
+# Statistical Check Report- Tests: Welch t-test (two-sided)- Source: `results/summary/statistical_tests_research_grade.csv`- FedAvg-IID vs Centralized: delta=0.3036 dB, p=0.089344- FedAvg-IID vs FedAvg-NonIID: delta=-0.2707 dB, p=0.028897- FedAvg-NonIID vs FedProx-NonIID: delta=-0.2800 dB, p=0.004403

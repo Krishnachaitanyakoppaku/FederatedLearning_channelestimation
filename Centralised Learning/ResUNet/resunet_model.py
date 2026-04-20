@@ -26,7 +26,7 @@ from research_core.metrics import nmse
 # DIRECTORIES & CONSTANTS
 # -------------------------------------------------------------
 SNR_LEVELS = [0, 5, 10, 15, 20]
-DATASET_DIR = "../../dataset/cnn"
+DATASET_DIR = PROJECT_ROOT / "dataset" / "cnn"
 
 # -------------------------------------------------------------
 # DATASET
@@ -43,18 +43,18 @@ class ChannelDataset(Dataset):
         return self.x[idx], self.y[idx]
 
 def build_dataloaders(snr_db, batch_size):
-    data_dir = os.path.join(DATASET_DIR, f"{snr_db}dB")
+    data_dir = DATASET_DIR / f"{snr_db}dB"
     
     train_ds = ChannelDataset(
-        x_path=os.path.join(data_dir, "X_train.npy"),
-        y_path=os.path.join(data_dir, "Y_train.npy"),
+        x_path=data_dir / "X_train.npy",
+        y_path=data_dir / "Y_train.npy",
     )
     test_ds = ChannelDataset(
-        x_path=os.path.join(data_dir, "X_test.npy"),
-        y_path=os.path.join(data_dir, "Y_test.npy"),
+        x_path=data_dir / "X_test.npy",
+        y_path=data_dir / "Y_test.npy",
     )
     
-    stats = np.load(os.path.join(data_dir, "norm_stats.npz"))
+    stats = np.load(data_dir / "norm_stats.npz")
     norm_stats = {"mean": float(stats["mean"]), "std": float(stats["std"])}
     
     train_loader = DataLoader(train_ds, batch_size=batch_size, shuffle=True)
