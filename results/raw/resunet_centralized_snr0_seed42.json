@@ -1,0 +1,69 @@
+{
+  "metadata": {
+    "run_id": "resunet_centralized_snr0_seed42",
+    "model": "ResUNet",
+    "setting": "Centralized",
+    "data_mode": "N/A",
+    "snr_db": 0,
+    "seed": 42,
+    "local_epochs": null,
+    "global_rounds": null,
+    "mu": null,
+    "lr": 0.0005,
+    "batch_size": 32,
+    "config_path": "/Users/chaitu/Desktop/Wireless paper/Project/experiment_config.json",
+    "config_sha256": "8562342df0c8bfb2fed2f8198a96851a9b01057c32fc3f455e88d67104a99cb7",
+    "git_commit": "7f2ca71d9a49c680c6d9a888b8b1b0c478bb41c9",
+    "python_version": "3.12.4",
+    "torch_version": "2.11.0",
+    "device": "mps",
+    "platform": "macOS-26.3.1-arm64-arm-64bit",
+    "extra": null
+  },
+  "started_at": 1776752425.4577029,
+  "history": [
+    {
+      "step_kind": "epoch",
+      "step_index": 1,
+      "train_mse_loss": 0.1939714345584313,
+      "val_nmse_db": -8.679206982167788
+    },
+    {
+      "step_kind": "epoch",
+      "step_index": 2,
+      "train_mse_loss": 0.10190597067276637,
+      "val_nmse_db": -9.881067214186224
+    },
+    {
+      "step_kind": "epoch",
+      "step_index": 3,
+      "train_mse_loss": 0.08219220019876956,
+      "val_nmse_db": -10.359653053249234
+    },
+    {
+      "step_kind": "epoch",
+      "step_index": 4,
+      "train_mse_loss": 0.06832609420021375,
+      "val_nmse_db": -10.991841028622586
+    },
+    {
+      "step_kind": "epoch",
+      "step_index": 5,
+      "train_mse_loss": 0.06648256781200568,
+      "val_nmse_db": -11.55762594274022
+    },
+    {
+      "step_kind": "epoch",
+      "step_index": 6,
+      "train_mse_loss": 0.060283864935239156,
+      "val_nmse_db": -12.400540186294396
+    },
+    {
+      "step_kind": "epoch",
+      "step_index": 7,
+      "train_mse_loss": 0.054716517801086106,
+      "val_nmse_db": -11.83326125042476
+    }
+  ],
+  "summary": {}
+}

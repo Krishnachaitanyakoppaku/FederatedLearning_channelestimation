@@ -1,0 +1,26 @@
+{
+  "metadata": {
+    "run_id": "cnn_centralized_snr0_seed42",
+    "model": "CNN",
+    "setting": "Centralized",
+    "data_mode": "N/A",
+    "snr_db": 0,
+    "seed": 42,
+    "local_epochs": null,
+    "global_rounds": null,
+    "mu": null,
+    "lr": 0.001,
+    "batch_size": 32,
+    "config_path": "/Users/chaitu/Desktop/Wireless paper/Project/experiment_config.json",
+    "config_sha256": "8562342df0c8bfb2fed2f8198a96851a9b01057c32fc3f455e88d67104a99cb7",
+    "git_commit": "7f2ca71d9a49c680c6d9a888b8b1b0c478bb41c9",
+    "python_version": "3.12.4",
+    "torch_version": "2.11.0",
+    "device": "mps",
+    "platform": "macOS-26.3.1-arm64-arm-64bit",
+    "extra": null
+  },
+  "started_at": 1776752425.2159958,
+  "history": [],
+  "summary": {}
+}
