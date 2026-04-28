@@ -1,4 +1,5 @@
-\documentclass[conference]{IEEEtran}
+% One-column layout is intentionally used for CVIP format.
+\documentclass[onecolumn]{IEEEtran}
 
 \usepackage{cite}
 \usepackage{amsmath,amssymb}
@@ -7,6 +8,7 @@
 \usepackage{multirow}
 \usepackage{array}
 \usepackage{url}
+\usepackage{float}
 
 \title{Federated Learning for Massive MIMO Channel Estimation Under IID and Non-IID Client Data}
 
@@ -42,7 +44,7 @@ This paper presents a systematic and reproducible benchmark study of FL channel 
 \end{itemize}
 
 \section{Related Work}
-FedAvg introduced communication-efficient decentralized optimization and established a practical FL baseline~\cite{mcmahan2017fedavg}. FedProx extended this framework with proximal regularization for heterogeneous clients~\cite{li2020fedprox}. In wireless systems, Elbir and Coleri demonstrated FL channel estimation in conventional and RIS-assisted massive MIMO, showing promising overhead-performance trade-offs~\cite{elbir2021flchannel}. 
+FedAvg introduced communication-efficient decentralized optimization and established a practical FL baseline~\cite{mcmahan2017fedavg}. FedProx extended this framework with proximal regularization for heterogeneous clients~\cite{li2020fedprox}. In wireless systems, Elbir and Coleri demonstrated FL channel estimation in conventional and RIS-assisted massive MIMO, showing promising overhead-performance trade-offs~\cite{elbir2021flchannel}. For broader RIS-oriented learning context, Faisal and Choi provide a comprehensive survey of machine learning approaches for reconfigurable intelligent surfaces, including federated learning directions~\cite{faisal2022rismlsurvey}. 
 
 Our work complements these studies by providing a high-coverage benchmark with detailed heterogeneity analysis, reproducible logging, and architecture-level validation across CNN and ResUNet.
 
@@ -103,7 +105,12 @@ A 20-run protocol is used for architecture consistency:
 \end{itemize}
 
 \subsection{Classical Baseline}
-Least Squares (LS) at 10 dB is included for classical reference. MMSE is discussed but not reported due to missing pilot/covariance calibration in this reproducible pipeline version.
+We include two classical references at 10 dB: LS and a calibrated scalar LMMSE baseline. LS uses direct noisy observation, i.e., $\hat H_{\mathrm{LS}}=\tilde H$. LMMSE is calibrated from train split statistics only (no test leakage):
+\begin{equation}
+\hat H_{\mathrm{MMSE}} = \mu_H + \alpha(\tilde H-\mu_H),\qquad
+\alpha = \frac{\sigma_H^2}{\sigma_H^2+\sigma_W^2},
+\end{equation}
+where $\mu_H,\sigma_H^2$ are estimated from clean train labels and $\sigma_W^2$ from train residual noise $(\tilde H-H)$. This provides a calibrated classical benchmark under the same split/metric protocol as deep models.
 
 \section{Results and Structured Analysis}
 This section follows a consistent pattern: \textit{purpose, observation, interpretation, implication}.
@@ -242,21 +249,26 @@ FedProx-Non-IID & 5 & -20.4661 & 0.1393 & -20.6357 \\
 \textbf{Purpose:} place deep models relative to classical LS and quantify systems cost.
 
 \begin{table}[t]
-\caption{Classical and Deep Baselines at 10 dB}
+\caption{Classical and Deep Baselines at 10 dB (Test Split)}
 \label{tab:ls}
 \centering
-\begin{tabular}{lcc}
+\begin{tabular}{p{0.20\linewidth}p{0.16\linewidth}p{0.54\linewidth}}
 \toprule
 Method & NMSE (dB) & Note \\
 \midrule
-LS & -9.9631 & $\hat H=H_{noisy}$ \\
-CNN (CL mean) & -19.4227 & +9.46 dB vs LS \\
-ResUNet (CL mean) & -22.1210 & +12.16 dB vs LS \\
+LS & -10.0022 & $\hat H=\tilde H$ \\
+Calibrated MMSE & -10.4169 & Train-calibrated scalar LMMSE \\
+CNN (CL mean) & -19.4227 & Improvement: +9.42 dB vs LS, +9.01 dB vs MMSE \\
+ResUNet (CL mean) & -22.1210 & Improvement: +12.12 dB vs LS, +11.70 dB vs MMSE \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\textbf{Observation:} deep models significantly outperform LS at 10 dB. CNN and ResUNet centralized means improve over LS by +9.46 dB and +12.16 dB, respectively.
+\textbf{Observation:} calibrated MMSE improves over LS by 0.41 dB, as expected for linear Bayesian shrinkage under AWGN. Both deep models remain substantially better than LS and MMSE in this benchmark: CNN by +9.01 dB over MMSE and ResUNet by +11.70 dB over MMSE.
+
+\textbf{Interpretation:} closing the classical-baseline gap confirms that deep models are not only outperforming a weak baseline (LS), but also a calibrated MMSE reference under the same evaluation split.
+
+\textbf{Implication:} the FL value proposition is strengthened: federated deep models can be compared against stronger classical references while preserving privacy-aware training.
 
 Communication payload model (FP32):
 \begin{equation}
@@ -347,11 +359,21 @@ Non-IID clients optimize diverging local objectives; aggregation then combines u
 \subsection{Why FedProx can be inconsistent}
 FedProx regularization ($\mu$) can stabilize updates but also restrict local adaptation. Benefit depends on heterogeneity level, local epochs, and model capacity; therefore, stability and accuracy may not improve simultaneously.
 
+\subsection{FedProx Stability Diagnosis in This Benchmark}
+The observed FedProx instability is consistent with a hyperparameter-regime mismatch rather than a universal algorithmic failure. Three pieces of evidence support this:
+\begin{itemize}
+    \item \textbf{Mu sensitivity:} ablation over $\mu\in\{0.001,0.005,0.01\}$ shows best mean performance at $\mu=0.001$ and a 0.423 dB sensitivity span, indicating over-regularization at larger $\mu$.
+    \item \textbf{Local epoch interaction:} local epochs show a larger 0.9731 dB sensitivity span with best value at $E=5$, suggesting that too few local epochs can make proximal regularization dominate before sufficient local fitting occurs.
+    \item \textbf{Statistical evidence:} FedAvg-Non-IID vs FedProx-Non-IID mean gap is significant (Welch $p=0.0044$), confirming the degradation is systematic in the tested regime.
+\end{itemize}
+
+Taken together, the likely cause is a combination of higher $\mu$ settings and limited local adaptation under heterogeneity, not the absence of any potential FedProx benefit.
+
 \section{Limitations and Future Work}
 \subsection{Limitations}
 \begin{itemize}
     \item Current full federated matrix is centered at 10 dB.
-    \item MMSE is not integrated with matched covariance calibration in this release.
+    \item Current MMSE baseline is calibrated scalar LMMSE; full covariance/pilot-aware MMSE is not yet integrated.
     \item ResUNet is an add-on validation (not full-grid sweep).
     \item External comparison is partially matched due to protocol differences.
 \end{itemize}
@@ -359,66 +381,14 @@ FedProx regularization ($\mu$) can stabilize updates but also restrict local ada
 \subsection{Future Work}
 \begin{itemize}
     \item Complete full multi-SNR federated sweeps (0/5/10/15/20 dB) for robustness profiling.
-    \item Add calibrated MMSE baseline with pilot-aware covariance estimation.
+    \item Extend MMSE to full covariance/pilot-aware formulation and report paired classical-vs-DL robustness studies.
     \item Extend to additional DeepMIMO scenarios for cross-environment generalization.
     \item Evaluate personalization and client-adaptive FL variants for strong Non-IID settings.
     \item Add architecture-component ablation (skip/residual depth/channel width) under matched communication budgets.
 \end{itemize}
 
 \section{Conclusion}
-We presented a reproducible FL benchmark for massive MIMO channel estimation under IID and Non-IID client data, with CNN as the primary benchmark and ResUNet as add-on validation. Detailed result analysis shows three stable findings: (i) FL can achieve competitive channel estimation quality relative to centralized baselines, (ii) Non-IID client distributions introduce a consistent and statistically supported performance penalty, and (iii) communication and model size materially affect deployability, requiring joint accuracy-efficiency optimization. By coupling structured run logging, statistical summaries, core convergence evidence, and supplementary diagnostics, the study provides a transparent IEEE-style evaluation template for future FL channel-estimation research.
-
-\section*{Supplementary Figures and Explanations}
-The following figures are retained as supplementary evidence and can be moved between main text and appendix based on page budget.
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=\columnwidth]{results/figures/paper/figure5_fedprox_variance_reduction.png}
-\caption{Supplementary S1: FedProx variance map. Shows where variance reduction appears even without mean accuracy gains.}
-\label{fig:s1}
-\end{figure}
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=\columnwidth]{results/figures/paper/figure6_fedprox_heatmap.png}
-\caption{Supplementary S2: FedProx hyperparameter heatmap ($\mu$, rounds, epochs). Highlights sensitivity region and best-performing area.}
-\label{fig:s2}
-\end{figure}
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=\columnwidth]{results/figures/paper/figure10_communication_efficiency.png}
-\caption{Supplementary S4: Communication-efficiency scatter. Visualizes Pareto behavior between communication events and NMSE.}
-\label{fig:s4}
-\end{figure}
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=\columnwidth]{results/figures/paper/resunet_addon_nmse_bar.png}
-\caption{Supplementary S5: ResUNet add-on mean with error bars. Confirms trend consistency under architecture change.}
-\label{fig:s5}
-\end{figure}
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=\columnwidth]{results/figures/paper/resunet_addon_nmse_box.png}
-\caption{Supplementary S6: ResUNet seed-wise distribution. Provides transparent variability view per setting.}
-\label{fig:s6}
-\end{figure}
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=\columnwidth]{results/figures/paper/resunet_addon_gap_analysis.png}
-\caption{Supplementary S7: ResUNet delta analysis (IID/Non-IID/FedProx effects).}
-\label{fig:s7}
-\end{figure}
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=\columnwidth]{results/figures/paper/resunet_addon_runtime_bar.png}
-\caption{Supplementary S8: ResUNet runtime profile. Supports systems-level resource discussion.}
-\label{fig:s8}
-\end{figure}
+We presented a reproducible FL benchmark for massive MIMO channel estimation under IID and Non-IID client data, with CNN as the primary benchmark and ResUNet as add-on validation. Detailed result analysis shows four stable findings: (i) FL can achieve competitive channel estimation quality relative to centralized baselines, (ii) Non-IID client distributions introduce a consistent and statistically supported performance penalty, (iii) calibrated MMSE and LS baselines are both surpassed by learned models in this benchmark, and (iv) communication and model size materially affect deployability, requiring joint accuracy-efficiency optimization. By coupling structured run logging, statistical summaries, core convergence evidence, and supplementary diagnostics, the study provides a transparent IEEE-style evaluation template for future FL channel-estimation research.
 
 \begin{thebibliography}{99}
 
@@ -435,7 +405,12 @@ in \emph{Proc. MLSys}, 2020.
 \bibitem{elbir2021flchannel}
 A. M. Elbir and S. Coleri,
 ``Federated learning for channel estimation in conventional and RIS-assisted massive MIMO,''
-\emph{IEEE Transactions on Wireless Communications}, 2021.
+\emph{IEEE Transactions on Wireless Communications}, vol. 21, no. 6, pp. 4255--4268, Jun. 2022, doi: 10.1109/TWC.2021.3128392.
+
+\bibitem{faisal2022rismlsurvey}
+K. M. Faisal and W. Choi,
+``Machine learning approaches for reconfigurable intelligent surfaces: A survey,''
+\emph{IEEE Access}, vol. 10, pp. 27343--27367, 2022, doi: 10.1109/ACCESS.2022.3157651.
 
 \bibitem{kairouz2021survey}
 P. Kairouz \emph{et al.},
@@ -448,5 +423,58 @@ A. Ghosh, J. Hong, D. Yin, and K. Ramchandran,
 arXiv:1906.06629, 2019.
 
 \end{thebibliography}
+
+\clearpage
+\section*{Supplementary Figures and Explanations}
+The following supplementary figures are intentionally placed after references and can be retained, reordered, or removed based on final page budget.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{results/figures/paper/figure5_fedprox_variance_reduction.png}
+\caption{Supplementary S1: FedProx variance map. Shows where variance reduction appears even without mean accuracy gains.}
+\label{fig:s1}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{results/figures/paper/figure6_fedprox_heatmap.png}
+\caption{Supplementary S2: FedProx hyperparameter heatmap ($\mu$, rounds, epochs). Highlights sensitivity region and best-performing area.}
+\label{fig:s2}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{results/figures/paper/figure10_communication_efficiency.png}
+\caption{Supplementary S3: Communication-efficiency scatter. Visualizes Pareto behavior between communication events and NMSE.}
+\label{fig:s4}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{results/figures/paper/resunet_addon_nmse_bar.png}
+\caption{Supplementary S4: ResUNet add-on mean with error bars. Confirms trend consistency under architecture change.}
+\label{fig:s5}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{results/figures/paper/resunet_addon_nmse_box.png}
+\caption{Supplementary S5: ResUNet seed-wise distribution. Provides transparent variability view per setting.}
+\label{fig:s6}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{results/figures/paper/resunet_addon_gap_analysis.png}
+\caption{Supplementary S6: ResUNet delta analysis (IID/Non-IID/FedProx effects).}
+\label{fig:s7}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{results/figures/paper/resunet_addon_runtime_bar.png}
+\caption{Supplementary S7: ResUNet runtime profile. Supports systems-level resource discussion.}
+\label{fig:s8}
+\end{figure}
 
 \end{document}
