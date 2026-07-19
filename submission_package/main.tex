@@ -10,7 +10,6 @@
 \usepackage{float}
 \usepackage{fancyhdr}
 \usepackage[skip=2pt]{caption}
-\usepackage{placeins}
 \usepackage{etoolbox}
 \linespread{0.95}
 
@@ -52,46 +51,41 @@ architecture of Massive Multiple Input Multiple Output (Massive MIMO) system is 
 Nonetheless, for the realization of the advantages of Massive MIMO, accurate information about the Channel State Information (CSI) at the BS becomes critical. It is here that the estimation of the channel becomes critical since the objective involves the estimation of the channel environment between the transmit antenna and the receive antenna using pilot signals. In the case of massive MIMO, the complexity in calculating the CSI arises from the fact that there are many dimensions within the channel matrix. The techniques commonly used for linear estimation include LS and MMSE.
 
 In order to address the shortcomings associated with classic heuristics, the latest developments within Deep Learning (DL) have shown tremendous success in estimating massive MIMO channel ~\cite{wen2018deep, he2018deep, ye2018power, soltani2019deep}. The DL algorithm learns to implicitly
-map the complex, non-linear relationships in the wireless channel and avoids the need for costly inversions of high-dimensional matrices. However, traditional DL techniques require a centralized approach to learning. Under such an approach, the user equipment (UE) would be required to continually send its highly dimensional local pilots/CSI measurements to the central server for training the model.Centralized learning results in heavy communication overheads and serious privacy issues.
+map the complex, non-linear relationships in the wireless channel and avoids the need for costly inversions of high-dimensional matrices. However, traditional DL techniques require a centralized approach to learning. Under such an approach, the user equipment (UE) would be required to continually send its highly dimensional local pilots/CSI measurements to the central server for training the model. Centralized learning results in heavy communication overheads and serious privacy issues.
 
 This is where Federated Learning (FL) emerges as an interesting option as it allows training of a globally good model by means of locally updating the system without the need for any transfer of the channel information at all~\cite{kairouz2021survey, ghosh2019robust}. However, although FL already addresses issues like privacy and minimization of uplink payload by its very nature, performance becomes sensitive to client heterogeneity when UE datasets become Non-IID because of geographical diversity and signal-to-noise ratio (SNR)  values.
 
 In this paper, we attempt to conduct an exhaustive analysis for channel estimation in FL based on both IID and Non-IID scenarios. The performances of FedAvg and the Proximal Regularization technique called FedProx have been compared using both light weight CNN architecture and heavy ResUNet architecture.
 
-\subsection{Contributions}
-\begin{itemize}
-    \item Channel estimation using raw-to-paper reproducibility traceability, IID/Non IID evaluation for FedAvg and FedProx, cross architecture validation using CNN and ResUNet, and communication-runtime-model size evaluation for realistic applications.
-\end{itemize}
-
 \section{Related Work}
 The closest related work to this research can be found in Elbir and Coleri ~\cite{elbir2021flchannel}. We have similar objectives of achieving channel estimation via FL and minimizing overhead through communication. The protocols used are not identical, so we present this as partially matching.
 
 
-Elbir and Coleri provide a definite framework in which CL involves the transfer of user data sets to the BS, whereas FL involves only the transmission of model update information, reducing the cost of communication without compromising estimation performance compared to CL ~\cite{elbir2021flchannel}. We follow this framework in our manuscript organization and present pipeline-level trade-offs instead of endpoint NMSE values.
+Elbir and Coleri provided a definite framework in which CL involves the transfer of user data sets to the BS, whereas FL involves only the transmission of model update information, reducing the cost of communication without compromising estimation performance compared to CL ~\cite{elbir2021flchannel}. We follow this framework in our manuscript organization and present pipeline-level trade-offs instead of endpoint NMSE values.
 
 In concrete terms, their approach involves: (i) estimation of FL channel in conventional as well as RIS-enabled massive MIMO; (ii) overhead analysis relative to CL; and (iii) robustness analysis for noisy/quantized/lossy model updates.
-They report that their method results in an overhead reduction factor of approximately 16 compared to CL in their framework. For further background on machine learning and federated approaches in current wireless networks, including RIS, refer to the comprehensive survey paper by Faisal and Choi~\cite{faisal2022rismlsurvey}. Founda-
+They reported that their method results in an overhead reduction factor of approximately 16 compared to CL in their framework. For further background on machine learning and federated approaches in current wireless networks, including RIS, refer to the comprehensive survey paper by Faisal and Choi~\cite{faisal2022rismlsurvey}. Founda-
 tional papers in the field of federated learning are FedAvg~\cite{mcmahan2017fedavg} and FedProx~\cite{li2020fedprox}.
 
 
 For comparison purposes,  Table~\ref{tab:alignment_ec} lists what is directly comparable to
 Elbir–Coleri ~\cite{elbir2021flchannel} and what is comparable based on context.
 
-\begin{table}[htbp]
+\begin{table}[H]
 \caption{Detailed Alignment With Elbir--Coleri~\cite{elbir2021flchannel}}
 \label{tab:alignment_ec}
 \centering
 \begin{tabular}{p{0.25\linewidth}p{0.34\linewidth}p{0.30\linewidth}}
 \toprule
-Aspect & Elbir--Coleri (TWC) & This Work \\
+Aspect & Elbir--Coleri (TWC) & Proposed Work \\
 \midrule
 Primary motivation & Reduce CL data-transfer overhead via FL & Same motivation and FL framing \\
 Task & FL channel estimation & FL channel estimation \\
 Scenarios & Conventional + RIS-assisted massive MIMO & Massive MIMO benchmark (DeepMIMO O1\_60) \\
 Model family & CNN-based ChannelNet & CNN (primary) + ResUNet (add-on) \\
 Learning modes & CL vs FL & CL vs FL (FedAvg/FedProx) \\
-Heterogeneity \\ analysis & Non-i.i.d. challenge discussed & Explicit IID/Non-IID protocol and quantified deltas \\
-Update-channel \\ robustness & Noisy, quantized, partial-loss model updates & Communication/runtime analysis; update-channel robustness left for future extension \\
+Heterogeneity \newline analysis & Non-i.i.d. challenge discussed & Explicit IID/Non-IID protocol and quantified deltas \\
+Update-channel \newline robustness & Noisy, quantized, partial-loss model updates & Communication/runtime analysis; update-channel robustness left for future extension \\
 Overhead reporting & Reports \textasciitilde16$\times$ lower overhead vs CL & Communication events + payload model (4PKR) \\
 Comparison level & Domain reference benchmark & Partial-match external comparison \\
 \bottomrule
@@ -105,12 +99,14 @@ Comparison level & Domain reference benchmark & Partial-match external compariso
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\columnwidth]{figures/system_architecture_diagram.png}
-\caption{Architecture diagram of the Massive MIMO Federated Learning system. The Base Station acts as the server, where it aggregates the model updates from multiple User Equipments (clients) without requiring raw channel data transmission.}
+\caption{Architecture diagram of the Massive MIMO Federated Learning system.} 
 \label{fig:system_model}
 \end{figure}
 
+Fig.~\ref{fig:system_model} illustrates the end-to-end federated pipeline used in the proposed work. The diagram highlights the clear separation between the edge-level User Equipments (UEs) and the central Base Station (BS). Instead of transmitting raw, high-dimensional channel samples to the BS---which causes heavy communication overhead---the clients perform local CSI model updates using their private data. The server then aggregates these model parameters. This setup follows the standard privacy-preserving FL paradigm and motivates our FedAvg/FedProx formulations under heterogeneous wireless clients~\cite{mcmahan2017fedavg,li2020fedprox,kairouz2021survey}.
 
-Let $H\in\mathbb{C}^{N_t\times N_s}$ denote the clean channel response and $\tilde H$ the noisy observation from pilot-based acquisition. The estimator outputs $\hat H=f_\theta(\tilde H)$. Performance is measured by normalized mean squared error (NMSE):
+
+Let $H\in\mathbb{C}^{N_t\times N_s}$ denotes the clean channel response and $\tilde H$ the noisy observation from pilot-based acquisition. The estimator outputs $\hat H=f_\theta(\tilde H)$. Performance is measured by normalized mean squared error (NMSE):
 \begin{equation}
 \mathrm{NMSE}_{\mathrm{dB}} = 10\log_{10}\left(\frac{\|H-\hat{H}\|_2^2}{\|H\|_2^2}\right).
 \end{equation}
@@ -125,14 +121,14 @@ where $n_k$ is local dataset size. FedProx solves per-client local objective:
 \end{equation}
 
 \section{Proposed Methodology}
-This proposed methodology would follow the below pipeline which consists of six stages, namely; (i) channel generation using the DeepMIMO ray tracing simulator, (ii) adding AWGN noise at varying SNR values, where power normalization is done for each sample, (iii) global data normalization and data set split for train and test data set, (iv) client data distribution following IID and Non-IID distribution, (v) Federated learning-based model training using FedAvg and FedProx algorithms, where two different CNN and ResUnet based architectures will be trained, and (vi) evaluation of models' performance through the NMSE metric using the holdout test data set. Model training will be carried out locally using all clients through the Adam optimizer to minimize the MSE cost function.
+This proposed methodology follows the below pipeline which consists of six stages, namely; (i) channel generation using the DeepMIMO ray tracing simulator, (ii) adding AWGN noise at varying SNR values, where power normalization is done for each sample, (iii) global data normalization and data set split for train and test data set, (iv) client data distribution following IID and Non-IID distribution, (v) Federated learning-based model training using FedAvg and FedProx algorithms, where two different CNN and ResUnet based architectures will be trained, and (vi) evaluation of models' performance through the NMSE metric using the holdout test data set. Model training will be carried out locally using all clients through the Adam optimizer to minimize the MSE cost function.
 
 \subsection{Dataset Construction}
-The dataset is derived from DeepMIMO O1\_60. We select 6000 users from BS-0, configure an 8$\times$8 BS array, 1$\times$1 UE array, and 64 OFDM subcarriers. The AWGN noise is added to the SNR of \{0,5,10,15,20\} dB after sample-wise normalization using the same random number generator seed (42). Real/imaginary channel data are saved as well.
+The dataset is derived from DeepMIMO O1\_60. We have selected 6000 users from BS-0, configure an 8$\times$8 BS array, 1$\times$1 UE array, and 64 OFDM subcarriers. The AWGN noise is added to the SNR of \{0,5,10,15,20\} dB after sample-wise normalization using the same random number generator seed (42). Real/imaginary channel data are saved as well.
 
 In the case of supervised learning, the samples and labels are normalized, randomly shuffled, and then split for training and testing in an 80/20 ratio per each SNR level.
 
-\subsection{Models}
+\subsection{Deep Learning Models}
 \textbf{CNN (Primary Benchmark):} A light-weight residual convolutional neural network architecture that learns the residual correction to noise ($\Delta H = H_{\text{noisy}} - H_{\text{clean}}$) as opposed to learning a mapping of the entire channel. The model comprises a feature extraction head (a 2D Convolutional layer that maps from 2 to 32 channels,
 followed by BatchNorm and ReLU), a residual body composed of a single \texttt{ResidualBlock} (2x 32-channel Convolutions with skip connection), and a reconstruction tail (2D Convolution from 32 channels back to 2 channels). The model is very efficient, using only 19,778 trainable parameters.
 
@@ -184,8 +180,6 @@ where $\mu_H,\sigma_H^2$ are estimated from clean train labels and $\sigma_W^2$ 
 which requires $O(d^3)$ matrix inversion for $d=8192$. This provides a rigorous upper bound on linear estimation performance under the same split/metric protocol as the deep models.
 
 \section{Results and Structured Analysis}
-This section follows a consistent pattern: \textit{purpose, observation, interpretation, implication}.
-
 \subsection{Centralized and Federated Performance Summary}
 \textbf{Purpose:} Understanding the global environment of performance before moving ahead.
 
@@ -211,6 +205,8 @@ FedProx-Non-IID & 144 & -18.5683 & 0.5498 & +0.8544 \\
 
 \textbf{Interpretation:} Federated learning with statistical aggregation efficiency can be considered as a potential approach; nevertheless, it can vary with variations in the data. Results of FedAvg-IID demonstrate that the federated learning method can be employed as an alternative, which, in turn, might become better than centralized learning methods upon optimization, although overall performance requires evaluation.
 
+Table~\ref{tab:cnn_stats} provides the primary CNN benchmark summary across centralized and federated settings. The mean and standard-deviation trends confirm two key findings: (i) FedAvg-IID remains close to centralized performance on average, and (ii) distribution heterogeneity introduces a measurable degradation from IID to Non-IID, motivating robustness-oriented FL analysis. These findings are visually corroborated by Fig.~\ref{fig:f1}, which illustrates the baseline reproducibility and the narrow variance across different random seeds in the centralized setup, establishing a stable upper bound for comparison.
+
 \textbf{Implication:} Both best and mean metrics must be considered while making any decision since the best assesses
 the potential whereas the mean analyzes the stability.
 
@@ -227,9 +223,9 @@ the potential whereas the mean analyzes the stability.
 \subsection{Convergence and Hyperparameter Effects}
 \textbf{Purpose:} The objective of the experiment is to study the effects of global rounds and epochs (number of local iterations) on the quality of estimates.
 
-\textbf{Observation:} NMSE improves with increase in both rounds and epochs for IID distributions. When transitioning from low to high budget for few rounds, there are significant increases in accuracy.
+\textbf{Observation:} As illustrated in Fig.~\ref{fig:f2}, the NMSE rapidly improves during the initial global rounds before reaching a phase of diminishing returns, reflecting the typical convergence rate of FedAvg on IID data. Furthermore, Fig.~\ref{fig:f3} highlights the impact of local computations; increasing the number of local epochs generally improves the global convergence performance, though it introduces a trade-off between local fitting and potential client drift.
 
-\textbf{Interpretation:} This is because it represents the typical behavior of FL optimization where each iteration of communications reduces the bias significantly, while each subsequent iteration optimizes the network. Increased epoch sizes help in better fitting locally, although there might be issues like drifting in case of heterogeneous data sets.
+\textbf{Interpretation:} This represents the typical behavior of FL optimization where each iteration of communications reduces the bias significantly, while each subsequent iteration optimizes the network. Increased epoch sizes help in better fitting locally, although there might be issues like drifting in case of heterogeneous data sets.
 
 \textbf{Implication:} Knee point selection should be done for the operating point.
 
@@ -250,7 +246,7 @@ the potential whereas the mean analyzes the stability.
 \subsection{Convergence Dynamics}
 \textbf{Purpose:} To establish trajectory information at the round level on stability and learning dynamics, rather than only end-point information.
 
-\textbf{Observation:} Trajectories following the IID principle have smoother paths and achieve smaller NMSE values than those following the Non-IID principle.
+\textbf{Observation:} This is explicitly visible in the convergence trajectories plotted in Fig.~\ref{fig:f8}. The figure tracks the validation NMSE across global rounds for both IID and Non-IID regimes. As depicted, the FedAvg-IID curve (often smoother and converging faster) maintains a consistent downward trajectory, whereas the Non-IID curves exhibit greater variance and instability during the optimization process, ultimately converging to a higher error floor.
 
 \textbf{Interpretation:} The graph of convergence illustrates that heterogeneity is an intermediary issue and not simply an end-issue since it impacts the optimization procedure.
 
@@ -266,11 +262,11 @@ the potential whereas the mean analyzes the stability.
 \subsection{IID vs Non-IID and Algorithm Behavior}
 \textbf{Purpose:} Cost incurred by changing distribution of the IID distribution and understand FedProx behavior relative to FedAvg.
 
-\textbf{Observation:} Changing distributions is more expensive in the case of non-IID than IID distribution (higher NMSE value). In the comparison of FedAvg-IID vs. FedAvg-Non-IID, average difference is found to be 0.2707 dB. There exists statistical significance between them (Welch $p=0.0289$). Comparing the performance of FedAvg-Non-IID and FedProx-Non-IID gives the average difference to be 0.2800 dB (Welch $p=0.0044$).
+\textbf{Observation:} Changing distributions is noticeably more expensive in the Non-IID case. Fig.~\ref{fig:f4} visually highlights this heterogeneity penalty by contrasting the NMSE distributions of IID versus Non-IID settings, showing a clear performance gap and increased variance when client data is skewed. Specifically, comparing FedAvg-IID and FedAvg-Non-IID reveals an average difference of 0.2707 dB. There exists statistical significance between them (Welch $p=0.0289$). Comparing the performance of FedAvg-Non-IID and FedProx-Non-IID gives the average difference to be 0.2800 dB (Welch $p=0.0044$).
 
 \textbf{Interpretation:} Effect of non-IID can be measured statistically. FedProx doesn’t give superior performance regarding mean NMSE, but stability and gains from specific regime are its strengths.
 
-\textbf{Best/mean/worst interpretation:} Larger variation shows more dependency on parameters/seeds, whereas smaller variation implies stability. Variation band ranges are larger for non-IID regime.
+\textbf{Best/mean/worst interpretation:} To further interpret this robustness, Fig.~\ref{fig:f7} summarizes the Best, Worst, and Mean statistics across the tested algorithms. The larger variation bands in the Non-IID regime underscore the system's increased sensitivity to random seeds and hyperparameter choices, whereas narrower bands in IID settings imply stable learning.
 
 \begin{figure}[htbp]
 \centering
@@ -316,7 +312,7 @@ FedProx-Non-IID & 5 & -20.4661 & 0.1393 & -20.6357 \\
 \label{fig:cross}
 \end{figure}
 
-\textbf{Observation:} ResUNet reproduces core trend directions: FedAvg-IID is strongest federated setting, and Non-IID causes substantial degradation. Specifically, FedAvg-Non-IID degrades by +1.7150 dB vs FedAvg-IID.
+\textbf{Observation:} Table~\ref{tab:resunet} outlines the performance metrics for the heavier ResUNet architecture across different settings. More importantly, Fig.~\ref{fig:cross} compares the performance curves of the simple CNN network with the complex ResUNet network. The plot demonstrates that despite the vast difference in model capacity, the core trend directions are perfectly ported: FedAvg-IID remains the strongest federated setup, and introducing Non-IID data causes a substantial and consistent degradation across both architectures. Specifically, FedAvg-Non-IID degrades by +1.7150 dB vs FedAvg-IID.
 
 \textbf{Interpretation:} heterogeneity penalty persists across shallow and encoder-decoder architectures, indicating a data-distribution effect rather than a single-model artifact.
 
@@ -343,7 +339,7 @@ ResUNet (CL mean) & -22.12 & 763,234 params; no $R_{HH}$ needed \\
 \end{tabular}
 \end{table}
 
-\textbf{Observation:} The full-covariance MMSE estimator achieves -28.55 dB at 10 dB SNR, substantially outperforming both the scalar LMMSE (-10.41 dB) and the deep learning models. However, the full-covariance MMSE requires explicit knowledge of the channel covariance matrix $R_{HH}$, which must be estimated from training data and inverted ($O(d^3)$ complexity for $d=8192$). However, the CNN and ResUNet learn their estimation scheme through the training data itself without computing the covariances.
+\textbf{Observation:} As detailed in Table~\ref{tab:classical}, the full-covariance MMSE estimator achieves a theoretical lower bound of -28.55 dB at 10 dB SNR, substantially outperforming both the scalar LMMSE (-10.41 dB) and the deep learning models. However, the full-covariance MMSE requires explicit knowledge of the channel covariance matrix $R_{HH}$, which must be estimated from training data and inverted ($O(d^3)$ complexity for $d=8192$). However, the CNN and ResUNet learn their estimation scheme through the training data itself without computing the covariances.
 
 \textbf{Interpretation:} These two DL algorithms present a practical approach in that they surpass the single-valued LMMSE algorithm significantly (+9.01 dB for CNN, +11.70 dB for ResUNet) but without the computational burden of calculating the covariances and inverting the matrices which is the case with the full MMSE algorithm.
 Especially federated learning scenarios because in such cases, each device will be required to compute their own $R_{HH}$locally and invert it.
@@ -367,7 +363,7 @@ computation for a single inference involves roughly \textasciitilde 2.5 GigaFLOP
 \end{itemize}
 Though ResUNet offers better NMSE results, its computational complexity is an order of magnitude greater compared to that of the CNN, which makes the consumption of energy much greater on clients with limited power supply.
 
-\textbf{Implication:} Communication-conscious selection of models becomes vital for implementing FL practically.
+\textbf{Implication:} Communication-conscious selection of models becomes vital for implementing FL practically. Finally, Table~\ref{tab:comm} encapsulates the communication cost snapshots for the CNN. It illustrates the practical trade-off between communication efficiency and model accuracy; configurations demanding more frequent communication events (e.g., R50, E5) yield the highest NMSE performance but require a significantly larger total uplink payload.
 
 
 

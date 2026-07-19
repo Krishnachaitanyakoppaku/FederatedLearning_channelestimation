@@ -44,3 +44,4 @@ Thumbs.db
 # ========== Checkpoints ==========
 checkpoints/
 results/checkpoints/
+*.pth/
