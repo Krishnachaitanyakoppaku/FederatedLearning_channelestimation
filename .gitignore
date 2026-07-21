@@ -15,7 +15,7 @@ build/
 deepmimo_scenarios/
 
 # ========== Generated Data ==========
-dataset/
+data/
 *.npy
 *.npz
 *.h5

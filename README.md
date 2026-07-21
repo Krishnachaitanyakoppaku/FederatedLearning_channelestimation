@@ -52,17 +52,16 @@ This work is a systematic, reproducible benchmark study (not a novel optimizer p
 ## What Was Implemented
 
 ### Core training/evaluation components
-- **Centralized CNN** (`Centralised Learning/CNN/train_and_evaluate.py`)
-- **Centralized ResUNet** (`Centralised Learning/ResUNet/resunet_model.py`)
-- **Federated CNN FedAvg** (`Federated Learning/CNN_Fedavg/federated_train.py`)
-- **Federated CNN FedProx/Non-IID** (`Federated Learning/CNN_FedProx/federated_train.py`)
-- **Federated ResUNet FedProx (+ IID/Non-IID via flags)** (`Federated Learning/resunet_fedprox/fedprox_resunet.py`)
+- **Centralized CNN** (`models/centralized/CNN/train_and_evaluate.py`)
+- **Centralized ResUNet** (`models/centralized/ResUNet/resunet_model.py`)
+- **Federated CNN FedAvg** (`models/federated/CNN_FedAvg/federated_train.py`)
+- **Federated CNN FedProx/Non-IID** (`models/federated/CNN_FedProx/federated_train.py`)
+- **Federated ResUNet FedProx (+ IID/Non-IID via flags)** (`models/federated/ResUNet_FedProx/fedprox_resunet.py`)
 
 ### Reproducibility and reporting system
 - Structured run logs (`results/raw/*.json`, `results/raw/*_history.csv`)
-- Checkpoint/resume mechanism (`results/checkpoints/`)
-- Aggregation and coverage checks (`aggregate_results.py`, `validate_smoke.py`)
-- Publication figures and tables (`generate_roadmap_assets.py`, notebook)
+- Aggregation and coverage checks (`scripts/aggregate_results.py`, `scripts/validate_smoke.py`)
+- Publication figures and tables (`scripts/generate_roadmap_assets.py`, plotting scripts)
 
 ### Manuscript production
 - IEEE manuscript source: `IEEE_Conference_Paper.tex`
@@ -74,59 +73,74 @@ This work is a systematic, reproducible benchmark study (not a novel optimizer p
 
 ```text
 Project/
-|-- generate_dataset.py
-|-- add_noise.py
-|-- prepare_data.py
-|-- ls_estimator.py
-|-- run_experiments.py
-|-- aggregate_results.py
-|-- generate_paper_plots.py
-|-- generate_roadmap_assets.py
-|-- run_publication_scenarios.sh
-|-- run_resunet_claim_support.sh
-|-- roadmap_figure_generation.ipynb
-|-- IEEE_Conference_Paper.tex
-|-- PUBLICATION_ROADMAP.md
+|-- README.md
+|-- requirements.txt
+|-- requirements-lock.txt
+|-- experiment_config.json
 |
-|-- dataset/
-|   |-- H_clean.npy
-|   |-- H_clean_ri.npy
-|   |-- H_noisy_{0,5,10,15,20}dB.npy
-|   |-- H_noisy_{0,5,10,15,20}dB_ri.npy
-|   `-- cnn/
+|-- scripts/
+|   |-- generate_dataset.py
+|   |-- add_noise.py
+|   |-- prepare_data.py
+|   |-- ls_estimator.py
+|   |-- compute_mmse_baseline.py
+|   |-- run_experiments.py
+|   |-- aggregate_results.py
+|   |-- generate_paper_plots.py
+|   |-- generate_publication_package.py
+|   |-- generate_roadmap_assets.py
+|   `-- validate_smoke.py
+|
+|-- data/
+|   |-- raw/
+|   |   |-- o1_60_matrix.npy
+|   |   |-- H_clean.npy
+|   |   |-- H_clean_ri.npy
+|   |   |-- H_noisy_{0,5,10,15,20}dB.npy
+|   |   `-- H_noisy_{0,5,10,15,20}dB_ri.npy
+|   `-- splits/
 |       |-- 0dB/ ... 20dB/
 |       `-- each contains: X_train.npy, Y_train.npy, X_test.npy, Y_test.npy, norm_stats.npz
 |
-|-- Centralised Learning/
-|   |-- CNN/
-|   |   |-- cnn_model.py
-|   |   `-- train_and_evaluate.py
-|   `-- ResUNet/
-|       `-- resunet_model.py
+|-- models/
+|   |-- centralized/
+|   |   |-- CNN/
+|   |   |   |-- cnn_model.py
+|   |   |   `-- train_and_evaluate.py
+|   |   `-- ResUNet/
+|   |       `-- resunet_model.py
+|   `-- federated/
+|       |-- CNN_FedAvg/
+|       |   |-- split_clients.py
+|       |   |-- local_train.py
+|       |   `-- federated_train.py
+|       |-- CNN_FedProx/
+|       |   |-- non_iid_split.py
+|       |   |-- local_train.py
+|       |   `-- federated_train.py
+|       |-- ResUNet_FedAvg/
+|       |   `-- fed_resunet.py
+|       `-- ResUNet_FedProx/
+|           `-- fedprox_resunet.py
 |
-|-- Federated Learning/
-|   |-- CNN_Fedavg/
-|   |   |-- split_clients.py
-|   |   |-- local_train.py
-|   |   `-- federated_train.py
-|   |-- CNN_FedProx/
-|   |   |-- non_iid_split.py
-|   |   |-- local_train.py
-|   |   `-- federated_train.py
-|   |-- ResUNet/
-|   |   `-- fed_resunet.py
-|   `-- resunet_fedprox/
-|       `-- fedprox_resunet.py
+|-- research_core/
+|   |-- __init__.py
+|   |-- config.py
+|   |-- logging_utils.py
+|   `-- metrics.py
 |
 |-- results/
 |   |-- raw/
-|   |-- checkpoints/
 |   |-- summary/
-|   `-- figures/paper/
+|   |-- logs/
+|   |-- models/
+|   `-- figures/
 |
-`-- submission_package/
+`-- paper/
+    |-- IEEE_Conference_Paper.tex
     |-- main.tex
     |-- main.pdf
+    |-- main.bib
     `-- figures/
 ```
 
@@ -166,10 +180,10 @@ Noise protocol:
 - Per-sample power normalization to enforce target SNR per user
 
 Saved outputs:
-- clean complex: `dataset/H_clean.npy`
-- clean real/imag stack: `dataset/H_clean_ri.npy`
-- noisy complex per SNR: `dataset/H_noisy_{snr}dB.npy`
-- noisy real/imag per SNR: `dataset/H_noisy_{snr}dB_ri.npy`
+- clean complex: `data/raw/H_clean.npy`
+- clean real/imag stack: `data/raw/H_clean_ri.npy`
+- noisy complex per SNR: `data/raw/H_noisy_{snr}dB.npy`
+- noisy real/imag per SNR: `data/raw/H_noisy_{snr}dB_ri.npy`
 
 ### 3) CNN-ready split and normalization (`prepare_data.py`)
 
@@ -178,7 +192,7 @@ For each SNR:
 - Applies global normalization using mean/std over concatenated X+Y
 - Uses reproducible shuffle (`seed=42`)
 - Splits into `80/20` train/test
-- Saves to `dataset/cnn/{snr}dB/`:
+- Saves to `data/splits/{snr}dB/`:
   - `X_train.npy`, `Y_train.npy`, `X_test.npy`, `Y_test.npy`, `norm_stats.npz`
 
 This produces the standardized supervised learning dataset used by CNN and FL scripts.
@@ -193,7 +207,7 @@ This produces the standardized supervised learning dataset used by CNN and FL sc
 
 ## Model Architectures
 
-### CNN (`Centralised Learning/CNN/cnn_model.py`)
+### CNN (`models/centralized/CNN/cnn_model.py`)
 
 Input/output:
 - Input: `(B, 2, 64, 64)` real/imag noisy channel
@@ -208,7 +222,7 @@ Architecture:
 Parameter count:
 - `19,778` trainable parameters (computed in environment)
 
-### ResUNet (`Centralised Learning/ResUNet/resunet_model.py` and FL variants)
+### ResUNet (`models/centralized/ResUNet/resunet_model.py` and FL variants)
 
 Architecture family:
 - Encoder-decoder with skip connections
@@ -223,7 +237,7 @@ Parameter count:
 ## Federated Setup and Non-IID Definitions
 
 ### FedAvg (IID) for CNN
-- Script: `Federated Learning/CNN_Fedavg/split_clients.py`
+- Script: `models/federated/CNN_FedAvg/split_clients.py`
 - Mechanism:
   - global shuffle of train indices
   - equal partition to clients
@@ -232,16 +246,16 @@ Parameter count:
 
 Two non-IID split mechanisms are present in repo:
 
-1. `Federated Learning/CNN_Fedavg/split_clients.py --non_iid`
+1. `models/federated/CNN_FedAvg/split_clients.py --non_iid`
    - sorts samples by clean-channel magnitude norm
    - assigns contiguous chunks per client
 
-2. `Federated Learning/CNN_FedProx/non_iid_split.py`
+2. `models/federated/CNN_FedProx/non_iid_split.py`
    - loads source pools from SNRs `[0,5,10,15,20]`
    - rotates source pool by client ID and takes fixed samples per client
    - produces client distribution skew across source SNRs
 
-### ResUNet federated (recommended path: `fedprox_resunet.py`)
+### ResUNet federated (recommended path: `models/federated/ResUNet_FedProx/fedprox_resunet.py`)
 
 Supports both IID and Non-IID in one script:
 - IID: default split
@@ -263,32 +277,35 @@ This allows interrupted long runs to continue from latest checkpoint.
 
 ## Experiment Protocols
 
-## 1) Phased run interface
+To execute the systematic experimental grid, we use a unified interface structured around **four phases**:
 
+### **Phase 1: Verification & Configuration**
+Loads the environment settings from `experiment_config.json` and prints the parameter grid (seeds, target SNRs, communication rounds, client local epochs). Useful to sanity-check configurations before launching computations.
 ```bash
-python run_experiments.py --phase 1
-python run_experiments.py --phase 2
-python run_experiments.py --phase 3
-python run_experiments.py --phase 4
+python scripts/run_experiments.py --phase 1
 ```
 
-## 2) Publication scenario script
-
+### **Phase 2: Centralized Baseline Benchmarks**
+Sweeps through each random seed to train the centralized baseline models (CNN and ResUNet) on the combined dataset. This provides the performance ceilings (optimal NMSE) under unified training conditions.
 ```bash
-./run_publication_scenarios.sh
+python scripts/run_experiments.py --phase 2
 ```
 
-## 3) ResUNet add-on validation batch (20 runs)
-
+### **Phase 3: Federated Grid Sweeps**
+Performs the complete federated learning parameter sweep:
+1. Shards the dataset into IID divisions (`split_clients.py`) and Non-IID divisions (`non_iid_split.py`).
+2. Sweeps through seeds, global rounds, and local epochs to train the FedAvg-IID, FedAvg-Non-IID, and FedProx-Non-IID frameworks.
 ```bash
-./run_resunet_claim_support.sh
+python scripts/run_experiments.py --phase 3
 ```
 
-Protocol covered by this script:
-- Centralized: 5 seeds
-- FedAvg-IID: 5 seeds (via `fedprox_resunet.py` with `mu=0`)
-- FedAvg-Non-IID: 5 seeds (`mu=0`, `--non_iid`)
-- FedProx-Non-IID: 5 seeds (`mu=0.001`, `--non_iid`)
+### **Phase 4: Structured Data Aggregation**
+Collects the raw JSON telemetry logs generated by the centralized and federated training runs in `results/raw/` and compiles them into clean comparison sheets in `results/summary/`.
+```bash
+python scripts/run_experiments.py --phase 4
+```
+
+
 
 ---
 
@@ -375,32 +392,72 @@ From `paper_table_4_communication_cost.csv`:
 
 ## How to Reproduce End-to-End
 
+Follow these step-by-step instructions to recreate the dataset, execute the grid sweep, aggregate results, and compile the final paper figures:
+
+### 1) Environment Setup
+Recreate the virtual environment using Python 3.12 (Homebrew installation is recommended to avoid version mismatch):
 ```bash
-# 1) Setup
-python3 -m venv myenv
+# Clean previous setup and create new environment
+rm -rf myenv
+/opt/homebrew/bin/python3.12 -m venv myenv
 source myenv/bin/activate
+
+# Install required packages
+pip install --upgrade pip
 pip install -r requirements.txt
+```
 
-# 2) Dataset build
-python generate_dataset.py
-python add_noise.py
-for snr in 0 5 10 15 20; do python prepare_data.py --snr "$snr"; done
+### 2) Dataset Pipeline Generation
+Extract channels from the DeepMIMO simulator, inject CSCG noise per sample, and create split normalization folders:
+```bash
+# Extract O1_60 ray-tracing channels
+python scripts/generate_dataset.py
 
-# 3) Main experiment phases
-python run_experiments.py --phase 1
-python run_experiments.py --phase 2
-python run_experiments.py --phase 3
-python run_experiments.py --phase 4
+# Inject CSCG noise at [0, 5, 10, 15, 20] dB SNR
+python scripts/add_noise.py
 
-# 4) Aggregate + publication assets
-python aggregate_results.py --raw_dir results/raw --out results/summary/aggregated_metrics.csv --paper_table results/summary/final_comparison_table.csv --coverage_out results/summary/coverage_report.csv
-python generate_roadmap_assets.py --phase all --paper_model CNN
+# Create 80/20 train/test splits for each SNR
+for snr in 0 5 10 15 20; do
+    python scripts/prepare_data.py --snr "$snr"
+done
+```
 
-# 5) ResUNet add-on (optional but recommended for architecture validation)
-./run_resunet_claim_support.sh
+### 3) Run Experiment Grid (Phases 1-4)
+Execute the configured sweep phases sequentially:
+```bash
+# Verify configs
+python scripts/run_experiments.py --phase 1
 
-# 6) Notebook regeneration (includes appended add-on cells)
-jupyter notebook roadmap_figure_generation.ipynb
+# Train Centralized CNN and ResUNet models
+python scripts/run_experiments.py --phase 2
+
+# Split client datasets (IID/Non-IID) and run federated sweep
+python scripts/run_experiments.py --phase 3
+
+# Consolidate raw logs
+python scripts/run_experiments.py --phase 4
+```
+
+### 4) Generate Manuscript Tables and Figures
+Compile the raw metrics into final comparison tables and generate all publication-grade figures:
+```bash
+# Generate aggregated metrics and coverage reports
+python scripts/aggregate_results.py \
+    --raw_dir results/raw \
+    --out results/summary/aggregated_metrics.csv \
+    --paper_table results/summary/final_comparison_table.csv \
+    --coverage_out results/summary/coverage_report.csv
+
+# Generate publication plots (Pareto fronts, SNR sweeps, latency)
+python scripts/generate_publication_package.py \
+    --raw_dir results/raw \
+    --summary_dir results/summary \
+    --dataset_dir data/splits/10dB
+
+# Generate additional roadmap assets
+python scripts/generate_roadmap_assets.py \
+    --phase all \
+    --paper_model CNN
 ```
 
 ---
@@ -408,18 +465,18 @@ jupyter notebook roadmap_figure_generation.ipynb
 ## Submission Package and LaTeX Build
 
 ### Manuscript sources
-- Main source: `IEEE_Conference_Paper.tex`
-- Submission copy: `submission_package/main.tex`
+- Main source: `paper/IEEE_Conference_Paper.tex`
+- Submission copy: `paper/main.tex`
 
 ### Build command
 
 ```bash
-cd submission_package
+cd paper
 tectonic main.tex
 ```
 
 ### Output
-- `submission_package/main.pdf`
+- `paper/main.pdf`
 
 ---
 

@@ -1,0 +1,45 @@
+{
+  "metadata": {
+    "run_id": "cnn_fedavg_iid_r2_e1_seed42",
+    "model": "CNN",
+    "setting": "FedAvg",
+    "data_mode": "IID",
+    "snr_db": 10,
+    "seed": 42,
+    "local_epochs": 1,
+    "global_rounds": 2,
+    "mu": null,
+    "lr": 0.001,
+    "batch_size": 64,
+    "config_path": null,
+    "config_sha256": null,
+    "git_commit": "4610bd58c96570f163c713042ac4f66212827ddc",
+    "python_version": "3.12.13",
+    "torch_version": "2.13.0",
+    "device": "mps",
+    "platform": "macOS-26.5.2-arm64-arm-64bit",
+    "extra": {
+      "num_clients": 5
+    }
+  },
+  "started_at": 1784628958.9880252,
+  "history": [
+    {
+      "step_kind": "round",
+      "step_index": 1,
+      "nmse_db": -11.226794545032577,
+      "nmse_linear": 0.07539118081331253
+    },
+    {
+      "step_kind": "round",
+      "step_index": 2,
+      "nmse_db": -13.996172256324755,
+      "nmse_linear": 0.039845820516347885
+    }
+  ],
+  "summary": {
+    "final_nmse_db": -13.996172256324755
+  },
+  "ended_at": 1784628971.575765,
+  "duration_sec": 12.587739706039429
+}
